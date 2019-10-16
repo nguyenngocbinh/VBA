@@ -1,0 +1,26 @@
+Sub est()
+' Tools/References/Microsoft Scripting Runtime
+Dim fso As New Scripting.FileSystemObject
+    With Application.FileDialog(msoFileDialogFilePicker)
+        .Title = "Add Files"
+        .Filters.Clear
+        .Filters.Add "Excel Files", "*.xls*"
+        .AllowMultiSelect = True
+        If .Show = -1 Then
+            Set vDirAr = .SelectedItems
+        Else
+            Exit Sub
+        End If
+    End With
+    
+    Application.DisplayAlerts = False
+    
+    For Each file In vDirAr
+        Set Wb = Workbooks.Open(Filename:=file, ReadOnly:=True, UpdateLinks:=False)
+        Wb.SaveAs Filename:=fso.GetBaseName(file) & ".xlsx", FileFormat:=xlWorkbookDefault, CreateBackup:=False
+        Wb.Close savechanges:=False
+    Next file
+    
+    Application.DisplayAlerts = True
+    
+End Sub
